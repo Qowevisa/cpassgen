@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include "../inc/cpassgen.h"
@@ -6,32 +7,25 @@
 #include "../inc/math.h"
 #include "../inc/gnr.h"
 
-// out will be char[4];
-void prime_to_bits(unsigned int prime, unsigned char **out) {
-	(*out) = (unsigned char*)malloc(4);
-	unsigned char tmp_byte;
-	unsigned char bit;
-	float prm_f = Q_rsqrt(prime);
-	for (int i = 0; i < 4; i++) {
-        tmp_byte = 0;
-        bit = 128;
-        while (bit > 0) {
-            prm_f = prm_f * 2;
-            unsigned int rest = (unsigned int)prm_f;
-            prm_f -= rest;
-            if (rest == 1) {
-                tmp_byte += bit;
-                bit /= 2;
-            } else {
-                bit /= 2;
-            }
-        }
-        (*out)[i] = tmp_byte;
+void gen_part_1(unsigned char **gen) {
+	unsigned int prime = 0;
+	unsigned char *bits = NULL;
+	gen_new_prime(&prime);
+	// processing 256 prime numbers
+	for (int i = 0; i < bb; i++) {
+		int_to_bits(prime, &bits);
+		for (int j = 0; j < 4; j++) {
+			if (i + j < bb) {
+				(*gen)[i + j] = (*gen)[i + j] ^ bits[j];
+			}
+		}
+		free(bits);
+		gen_new_prime(&prime);
 	}
 }
 
 int main(int argc, char *argv[]) {
-	char first_block[sq];
+	unsigned char first_block[sq];
 	memset(first_block, 0, sq);
 	for (int i = 0; i < bs; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -39,8 +33,12 @@ int main(int argc, char *argv[]) {
             mvnbitr(&first_block[i*4 + j], j);
         }
     }
-	char left_block[mb];
-	char right_block[mb];
+	// gen
+	unsigned char *gen = (unsigned char*)calloc(bb, sizeof(unsigned char));
+	// First shuffle
+	gen_part_1(&gen);
+	unsigned char left_block[mb];
+	unsigned char right_block[mb];
 	memset(left_block, ~0, mb);
 	memset(right_block, 0, mb);
 	return 0;

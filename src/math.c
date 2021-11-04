@@ -8,13 +8,14 @@ float Q_rsqrt(float number) {
 
     x2 = number * 0.5;
     y = number;
-    i = *(long*)&y;
+    i = * (long*)&y;
     i = 0x5f3759df - (i >> 1);
-    y = *(float*)&y;
-    y = y*(t - (x2 * y * y));
-    y = y*(t - (x2 * y * y));
+    y = * (float*)&i;
+    y = y*( t - (x2 * y * y));
+    y = y*( t - (x2 * y * y));
     return y;
 }
+
 
 bool is_prime(unsigned int num) {
     if (num < 2) {

@@ -1,3 +1,3 @@
 usr_bin_folder_path = "/usr/bin/"
 CC = gcc
-CFLAGS = 
+CFLAGS = -Wall -Wextra -pedantic -lm -g

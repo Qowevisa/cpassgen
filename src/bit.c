@@ -55,3 +55,28 @@ void ROTL(unsigned char *c, int n) {
 	(*c) = head | rest;
 	return;
 }
+
+
+// out will be char[4];
+void int_to_bits(unsigned int num, unsigned char **out) {
+	(*out) = (unsigned char*)malloc(4);
+	unsigned char tmp_byte;
+	unsigned char bit;
+	float prm_f = Q_rsqrt(num);
+	for (int i = 0; i < 4; i++) {
+        tmp_byte = 0;
+        bit = 128;
+        while (bit > 0) {
+            prm_f = prm_f * 2;
+            unsigned int rest = (unsigned int)prm_f;
+            prm_f -= rest;
+            if (rest == 1) {
+                tmp_byte += bit;
+                bit /= 2;
+            } else {
+                bit /= 2;
+            }
+        }
+        (*out)[i] = tmp_byte;
+	}
+}
