@@ -1,5 +1,6 @@
 #include "../inc/math.h"
 #include <stdbool.h>
+#include <stdlib.h>
 
 float Q_rsqrt(float number) {
     long i;
@@ -17,7 +18,7 @@ float Q_rsqrt(float number) {
 }
 
 
-bool is_prime(unsigned int num) {
+bool is_prime(u_int num) {
     if (num < 2) {
         return false;
     }
@@ -48,17 +49,17 @@ bool is_prime(unsigned int num) {
     return true;
 }
 
-void gen_new_prime(unsigned int *prime) {
+void gen_new_prime(u_int *prime) {
     (*prime)++;
     while (!is_prime(*prime)) {
         (*prime)++;
     }
 }
 
-unsigned int reverse_uint(unsigned int num) {
-	unsigned int new_bit = 1 << 31;
-	unsigned int bit = 1;
-	unsigned int ret = 0;
+u_int reverse_uint(u_int num) {
+	u_int new_bit = 1 << 31;
+	u_int bit = 1;
+	u_int ret = 0;
 	while (new_bit > 0) {
 		if (num & bit) {
 			ret |= new_bit;
@@ -69,7 +70,7 @@ unsigned int reverse_uint(unsigned int num) {
 	return ret;
 }
 
-unsigned int shuff_uint(unsigned int num) {
+u_int shuff_uint(u_int num) {
 	uint_c tmp;
 	uint_c ret;
 	ret.num = 0;

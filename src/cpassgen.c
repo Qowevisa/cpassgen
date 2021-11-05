@@ -5,11 +5,10 @@
 #include "../inc/cpassgen.h"
 #include "../inc/bit.h"
 #include "../inc/math.h"
-#include "../inc/gnr.h"
 
-void gen_part_1(unsigned char **gen) {
-	unsigned int prime = 0;
-	unsigned char *bits = NULL;
+void gen_part_1(u_char **gen) {
+	u_int prime = 0;
+	u_char *bits = NULL;
 	gen_new_prime(&prime);
 	// processing 256 prime numbers
 	for (int i = 0; i < bb; i++) {
@@ -24,8 +23,8 @@ void gen_part_1(unsigned char **gen) {
 	}
 }
 
-void gen_part_2(unsigned char **gen) {
-	unsigned int fib[32] = {0};
+void gen_part_2(u_char **gen) {
+	u_int fib[32] = {0};
 	fib[0] = 1;
 	fib[1] = 1;
 	// init fibonacci numbers
@@ -42,7 +41,7 @@ void gen_part_2(unsigned char **gen) {
 		fib[i] |= reverse_uint(fib[i]);
 		fib[i] = ROTR_UINT(shuff_uint(fib[i]), 13 + (i / 3));
 	}
-	unsigned char expanded[mb];
+	u_char expanded[mb];
 	for (int i = 0; i < mb; i++) {
 		if (i % 2 == 0) {
 			expanded[i] = get_byte(fib[i / 8], (i % 8) / 2);
@@ -60,7 +59,7 @@ void gen_part_2(unsigned char **gen) {
 }
 
 int main() {
-	unsigned char first_block[sq];
+	u_char first_block[sq];
 	memset(first_block, 0, sq);
 	for (int i = 0; i < bs; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -68,13 +67,13 @@ int main() {
         }
     }
 	// gen
-	unsigned char *gen = (unsigned char*)calloc(bb, sizeof(unsigned char));
+	u_char *gen = (u_char*)calloc(bb, sizeof(u_char));
 	// First shuffle
 	gen_part_1(&gen);
 	// Second shuffle
 	gen_part_2(&gen);
-	unsigned char left_block[mb];
-	unsigned char right_block[mb];
+	u_char left_block[mb];
+	u_char right_block[mb];
 	memset(left_block, ~0, mb);
 	memset(right_block, 0, mb);
 	return 0;

@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-unsigned char mvnbitr(unsigned char c, int n) {
+u_char mvnbitr(u_char c, int n) {
 	int counter = 0;
 	if (n < 0) {
 		n = 0;
@@ -18,7 +19,7 @@ unsigned char mvnbitr(unsigned char c, int n) {
 	return c;
 }
 
-unsigned char mvnbitl(unsigned char c, int n) {
+u_char mvnbitl(u_char c, int n) {
 	int counter = 0;
 	if (n < 0) {
 		n = 0;
@@ -32,70 +33,51 @@ unsigned char mvnbitl(unsigned char c, int n) {
 	return c;
 }
 
-unsigned char ROTR(unsigned char c, int n) {
+u_char ROTR(u_char c, int n) {
 	if (n >= 8 || n <= 0) {
         n %= 8;
     }
-	unsigned char bits = 0xFF >> (8 - n);
-	unsigned char head = (c & bits) << (8 - n);
-	unsigned char rest = (c >> n); 
+	u_char bits = 0xFF >> (8 - n);
+	u_char head = (c & bits) << (8 - n);
+	u_char rest = (c >> n); 
 	return head | rest;
 }
 
-unsigned char ROTL(unsigned char c, int n) {
+u_char ROTL(u_char c, int n) {
 	if (n >= 8 || n <= 0) {
         n %= 8;
     }
-	unsigned char bits = 0xFF << (8 - n);
-	unsigned char head = (c & bits) >> (8 - n);
-	unsigned char rest = (c << n);
+	u_char bits = 0xFF << (8 - n);
+	u_char head = (c & bits) >> (8 - n);
+	u_char rest = (c << n);
 	return head | rest;
 }
 
-void pul(unsigned int num) {
-	unsigned int bit = 1 << 31;
-	unsigned char counter = 0;
-	for (int i = 0; i < 32; i++) {
-		if (num & bit) {
-			fputc('1', stdout);
-		} else {
-			fputc('0', stdout);
-		}
-		bit >>= 1;
-		counter++;
-		if (counter == 8) {
-			counter = 0;
-			fputc(' ', stdout);
-		}
-	}
-	fputc('\n', stdout);
-}
-
-unsigned int ROTL_UINT(unsigned int num, int n) {
+u_int ROTL_UINT(u_int num, int n) {
 	if (n >= 32 || n <= 0) {
         n %= 32;
     }
-	unsigned int bits = 0xFFFFFFFF << (32 - n);
-	unsigned int head = (num & bits) >> (32 - n);
-	unsigned int rest = (num << n);
+	u_int bits = 0xFFFFFFFF << (32 - n);
+	u_int head = (num & bits) >> (32 - n);
+	u_int rest = (num << n);
 	return head | rest;
 }
 
-unsigned int ROTR_UINT(unsigned int num, int n) {
+u_int ROTR_UINT(u_int num, int n) {
 	if (n >= 32 || n <= 0) {
         n %= 32;
     }
-	unsigned int bits = 0xFFFFFFFF >> (32 - n);
-	unsigned int head = (num & bits) << (32 - n);
-	unsigned int rest = (num >> n);
+	u_int bits = 0xFFFFFFFF >> (32 - n);
+	u_int head = (num & bits) << (32 - n);
+	u_int rest = (num >> n);
 	return head | rest;
 }
 
-unsigned char COMP(unsigned int num) {
+u_char COMP(u_int num) {
 	uint_c tmp;
 	memset(tmp.arr, 0xC0, 4);
 	tmp.num = num & tmp.num;
-	unsigned char ret = 0;
+	u_char ret = 0;
 	for (int i = 0; i < 4; i++) {
 		ret |= (tmp.num >> (6 + i*8)) << i*2;
 	}
@@ -103,17 +85,17 @@ unsigned char COMP(unsigned int num) {
 }
 
 // Uses Q_rsqrt and out will be char[4];
-void int_to_bits(unsigned int num, unsigned char **out) {
-	(*out) = (unsigned char*)malloc(4);
-	unsigned char tmp_byte;
-	unsigned char bit;
+void int_to_bits(u_int num, u_char **out) {
+	(*out) = (u_char*)malloc(4);
+	u_char tmp_byte;
+	u_char bit;
 	float prm_f = Q_rsqrt(num);
 	for (int i = 0; i < 4; i++) {
         tmp_byte = 0;
         bit = 128;
         while (bit > 0) {
             prm_f = prm_f * 2;
-            unsigned int rest = (unsigned int)prm_f;
+            u_int rest = (u_int)prm_f;
             prm_f -= rest;
             if (rest == 1) {
                 tmp_byte += bit;
@@ -126,12 +108,12 @@ void int_to_bits(unsigned int num, unsigned char **out) {
 	}
 }
 
-unsigned char get_byte(unsigned int num, unsigned int ind) {
+u_char get_byte(u_int num, u_int ind) {
 	if (ind > 3) {
 		ind %= 4;
 	}
-	unsigned char tmp[4] = {0};
-	unsigned int bit = 1 << 31;
+	u_char tmp[4] = {0};
+	u_int bit = 1 << 31;
 	for (int i = 0; i < 32; i++) {
 		if (num & bit) {
 			tmp[i / 8] |= bit >> (3 - i/8)*8;

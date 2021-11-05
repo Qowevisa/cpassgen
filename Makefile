@@ -1,6 +1,6 @@
 include config.mk
 project_name = cpassgen
-libs = gnr math bit
+libs = math bit
 OBJ_F = obj
 SRC_F = src
 
