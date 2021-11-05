@@ -54,3 +54,35 @@ void gen_new_prime(unsigned int *prime) {
         (*prime)++;
     }
 }
+
+unsigned int reverse_uint(unsigned int num) {
+	unsigned int new_bit = 1 << 31;
+	unsigned int bit = 1;
+	unsigned int ret = 0;
+	while (new_bit > 0) {
+		if (num & bit) {
+			ret |= new_bit;
+		}
+		new_bit >>= 1;
+		bit <<= 1;
+	}
+	return ret;
+}
+
+unsigned int shuff_uint(unsigned int num) {
+	uint_c tmp;
+	uint_c ret;
+	ret.num = 0;
+	tmp.num = num;
+	for (int i = 0; i < 4; i++) {
+		int prev = i - 1;
+		int next = i + 1;
+		if (prev < 0) {
+			prev += 4;
+		} else if (next > 3) {
+			next -= 4;
+		}
+		ret.arr[i] = ROTR(tmp.arr[prev] ^ tmp.arr[next], i*3);
+	}
+	return ret.num;
+}

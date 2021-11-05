@@ -24,19 +24,55 @@ void gen_part_1(unsigned char **gen) {
 	}
 }
 
-int main(int argc, char *argv[]) {
+void gen_part_2(unsigned char **gen) {
+	unsigned int fib[32] = {0};
+	fib[0] = 1;
+	fib[1] = 1;
+	// init fibonacci numbers
+	for (int i = 2; i < 32; i++) {
+		fib[i] = fib[i - 1] + fib[i - 2];
+	}
+	// just horizontal mirroring-ish
+	for (int i = 0; i < 16; i++) {
+		fib[i] += fib[31 - i];
+		fib[i] >>= (i / 7) + 1;
+	}
+	// real shuffle
+	for (int i = 0; i < 32; i++) {
+		fib[i] |= reverse_uint(fib[i]);
+		fib[i] = ROTR_UINT(shuff_uint(fib[i]), 13 + (i / 3));
+	}
+	unsigned char expanded[mb];
+	for (int i = 0; i < mb; i++) {
+		if (i % 2 == 0) {
+			expanded[i] = get_byte(fib[i / 8], (i % 8) / 2);
+		} else {
+			expanded[i] = COMP(ROTL_UINT(fib[i / 8], (i % 8) / 2));
+		}
+	}
+	for (int i = 0; i < bb; i++) {
+		if (i % 2 == 0) {
+			(*gen)[i] = (*gen)[i] ^ expanded[i / 2];
+		} else {
+			(*gen)[i] = (*gen)[i] ^ ROTR(expanded[mb - (i / 2) - 1], 3);
+		}
+	}
+}
+
+int main() {
 	unsigned char first_block[sq];
 	memset(first_block, 0, sq);
 	for (int i = 0; i < bs; i++) {
 		for (int j = 0; j < 4; j++) {
-			first_block[i*4 + j] = code[i];
-            mvnbitr(&first_block[i*4 + j], j);
+            first_block[i*4 + j] = mvnbitr(code[i], j);
         }
     }
 	// gen
 	unsigned char *gen = (unsigned char*)calloc(bb, sizeof(unsigned char));
 	// First shuffle
 	gen_part_1(&gen);
+	// Second shuffle
+	gen_part_2(&gen);
 	unsigned char left_block[mb];
 	unsigned char right_block[mb];
 	memset(left_block, ~0, mb);
