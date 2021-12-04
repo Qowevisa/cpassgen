@@ -5,11 +5,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-u_char mvnbitr(u_char c, int n) {
-	int counter = 0;
-	if (n < 0) {
-		n = 0;
-	} else if (n >= 8) {
+u_char mvnbitr(u_char c, u_char n) {
+	u_char counter = 0;
+	if (n >= 8) {
 		return 255;
 	}
 	while (counter != n) {
@@ -19,11 +17,9 @@ u_char mvnbitr(u_char c, int n) {
 	return c;
 }
 
-u_char mvnbitl(u_char c, int n) {
-	int counter = 0;
-	if (n < 0) {
-		n = 0;
-	} else if (n >= 8) {
+u_char mvnbitl(u_char c, u_char n) {
+    u_char counter = 0;
+	if (n >= 8) {
 		return 255;
 	}
 	while (counter != n) {
@@ -33,8 +29,8 @@ u_char mvnbitl(u_char c, int n) {
 	return c;
 }
 
-u_char ROTR(u_char c, int n) {
-	if (n >= 8 || n <= 0) {
+u_char ROTR(u_char c, u_char n) {
+	if (n >= 8) {
         n %= 8;
     }
 	u_char bits = 0xFF >> (8 - n);
@@ -43,8 +39,8 @@ u_char ROTR(u_char c, int n) {
 	return head | rest;
 }
 
-u_char ROTL(u_char c, int n) {
-	if (n >= 8 || n <= 0) {
+u_char ROTL(u_char c, u_char n) {
+	if (n >= 8) {
         n %= 8;
     }
 	u_char bits = 0xFF << (8 - n);
@@ -53,7 +49,7 @@ u_char ROTL(u_char c, int n) {
 	return head | rest;
 }
 
-u_int ROTL_UINT(u_int num, int n) {
+u_int ROTL_UINT(u_int num, u_int n) {
 	if (n >= 32 || n <= 0) {
         n %= 32;
     }
@@ -63,7 +59,7 @@ u_int ROTL_UINT(u_int num, int n) {
 	return head | rest;
 }
 
-u_int ROTR_UINT(u_int num, int n) {
+u_int ROTR_UINT(u_int num, u_int n) {
 	if (n >= 32 || n <= 0) {
         n %= 32;
     }

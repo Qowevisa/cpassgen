@@ -6,6 +6,14 @@
 #include "../inc/bit.h"
 #include "../inc/math.h"
 
+void gen_init(u_char **gen) {
+    for (int cycle = 0; cycle < 5; cycle++) {
+        for (int i = 0; i < bb; i++) {
+            (*gen)[i] = (*gen)[i] ^ (rand() % 256);
+        }
+    }
+}
+
 void gen_part_1(u_char **gen) {
 	u_int prime = 0;
 	u_char *bits = NULL;
@@ -58,6 +66,49 @@ void gen_part_2(u_char **gen) {
 	}
 }
 
+#define LINES_N 33
+
+// for now it's the only function
+u_char tt(u_char c) {
+    return
+    ROTR(
+        ROTR(
+            ROTR(~c, 5),
+            ROTL(~c, 3)),
+        ROTL(
+            ROTL(~c, 3),
+            ROTR(~c, 5))
+        );
+}
+
+void seed_from_block(u_int *seed, u_char block[]) {
+    // TODO: get 8/16/32 different setups
+    //  with different functions and then
+    //  functional pointer comes handy
+    u_char (*transform)(u_char) = &tt;
+    u_char data[4] = { 89, 226, 199, 19 };
+    u_int tmp = 0;
+    u_char fbcast[sq];
+    for (int i = 0; i < sq; i++) {
+        fbcast[i] = block[i];
+    }
+    u_int *ufbcast = (u_int*)fbcast;
+    for (int cycle = 0; cycle < 10; cycle++) {
+        for (u_int i = 0; i < sq; i++) {
+            fbcast[i] = ROTR(fbcast[i] + data[i % 4] - i*3, data[i % 4]);
+        }
+        //
+        for (u_int i = 0; i < (u_int)sq/sizeof(u_int); i++) {
+            tmp = tmp ^ ufbcast[i];
+        }
+        //
+        for (u_int i = 0; i < 4; i++) {
+            data[i] = (*transform)(data[i]);
+        }
+    }
+    *seed = tmp;
+}
+
 int main() {
 	u_char first_block[sq];
 	memset(first_block, 0, sq);
@@ -66,8 +117,13 @@ int main() {
             first_block[i*4 + j] = mvnbitr(code[i], j);
         }
     }
+    // creating seed from first_block
+    u_int seed = 0;
+    seed_from_block(&seed, first_block);
+    srand(seed);
 	// gen
 	u_char *gen = (u_char*)calloc(bb, sizeof(u_char));
+    gen_init(&gen);
 	// First shuffle
 	gen_part_1(&gen);
 	// Second shuffle

@@ -4,13 +4,8 @@ libs = math bit
 OBJ_F = obj
 SRC_F = src
 
-options:
-	@printf $(project_name)" make menu:\n"
-	@printf "make [options]   ::print this menu\n"
-	@printf "make build       ::compile\n"
-	@printf "make install     ::copies to bin folder\n"
-	@printf "make clean       ::remove *.o files\n"
-	@printf "make full        ::equvalent to \"make build && make install && make clean\"\n\033[0;0m"
+def: build
+	@
 
 $(OBJ_F)/%.o : $(SRC_F)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@

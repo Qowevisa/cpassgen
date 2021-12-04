@@ -1,3 +1,3 @@
-usr_bin_folder_path = "/usr/bin/"
+usr_bin_folder_path = "/usr/local/bin/"
 CC = gcc
-CFLAGS = -Wall -Wextra -pedantic -lm -g
+CFLAGS = -O2 -Werror -Wall -Wextra -pedantic -lm
