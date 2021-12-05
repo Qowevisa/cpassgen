@@ -6,15 +6,15 @@
 #include "../inc/bit.h"
 #include "../inc/math.h"
 
-void gen_init(u_char **gen) {
+void gen_init(u_char gen[]) {
     for (int cycle = 0; cycle < 5; cycle++) {
         for (int i = 0; i < bb; i++) {
-            (*gen)[i] = (*gen)[i] ^ (rand() % 256);
+            gen[i] = gen[i] ^ (rand() % 256);
         }
     }
 }
 
-void gen_part_1(u_char **gen) {
+void gen_part_1(u_char gen[]) {
 	u_int prime = 0;
 	u_char *bits = NULL;
 	gen_new_prime(&prime);
@@ -23,7 +23,7 @@ void gen_part_1(u_char **gen) {
 		int_to_bits(prime, &bits);
 		for (int j = 0; j < 4; j++) {
 			if (i + j < bb) {
-				(*gen)[i + j] = (*gen)[i + j] ^ bits[j];
+				gen[i + j] = gen[i + j] ^ bits[j];
 			}
 		}
 		free(bits);
@@ -31,7 +31,7 @@ void gen_part_1(u_char **gen) {
 	}
 }
 
-void gen_part_2(u_char **gen) {
+void gen_part_2(u_char gen[]) {
 	u_int fib[32] = {0};
 	fib[0] = 1;
 	fib[1] = 1;
@@ -59,14 +59,36 @@ void gen_part_2(u_char **gen) {
 	}
 	for (int i = 0; i < bb; i++) {
 		if (i % 2 == 0) {
-			(*gen)[i] = (*gen)[i] ^ expanded[i / 2];
+			gen[i] = gen[i] ^ expanded[i / 2];
 		} else {
-			(*gen)[i] = (*gen)[i] ^ ROTR(expanded[mb - (i / 2) - 1], 3);
+			gen[i] = gen[i] ^ ROTR(expanded[mb - (i / 2) - 1], 3);
 		}
 	}
 }
 
-#define LINES_N 33
+void gen_new_seed(u_int *seed, u_char gen[], char *arg) {
+    size_t len = strlen(arg);
+    int i = 0;
+    u_int tmp = 0;
+    u_int sum = 0;
+    u_int bit = 1 << 31;
+    while (i != bb) {
+        if ((gen[i] >> 7) & 1) {
+            tmp |= bit;
+        }
+        bit >>= 1;
+        if (bit == 0) {
+            bit = 1 << 31;
+            sum += tmp;
+            tmp = 0;
+        }
+        i++;
+    }
+    for (size_t i = 0; i < len; i++) {
+        sum += arg[i];
+    }
+    *seed = sum;
+}
 
 // for now it's the only function
 u_char tt(u_char c) {
@@ -109,8 +131,96 @@ void seed_from_block(u_int *seed, u_char block[]) {
     *seed = tmp;
 }
 
-int main() {
-	u_char first_block[sq];
+void rbcalc(u_char block[], char *arg) {
+    size_t len = strlen(arg);
+    size_t processed = 0;
+    while (processed != len) {
+        block[processed % mb] += arg[processed] + (rand() % 256);
+        processed++;
+    }
+    while (processed % mb != 0) {
+        block[processed % mb] += rand() % 256;
+        processed++;
+    }
+    //
+    u_int *ucast = (u_int*)block;
+    for (u_int i = 0; i < mb/4; i++) {
+        ucast[i] = ROTR_UINT(ucast[i], 17);
+    }
+}
+
+void lbcalc(u_char block[], char *arg) {
+    size_t len = strlen(arg);
+    size_t processed = 0;
+    while (processed != len) {
+        block[processed % mb] = block[processed % mb] ^ (arg[processed] + (rand() % 256));
+        processed++;
+    }
+    while (processed % mb != 0) {
+        block[processed % mb] = block[processed % mb] ^ (rand() % 256);
+        processed++;
+    }
+    //
+    u_int *ucast = (u_int*)block;
+    for (u_int i = 0; i < mb/4; i++) {
+        ucast[i] = ROTL_UINT(ucast[i], 13);
+    }
+}
+
+static const char ABC1[] = "ABCDEFGHIJKLM";
+static const char ABC2[] = "NOPQRSTUVWXYZ";
+static const char SPC[]  = "!@#$%^&*()";
+
+static const char abc1[] = "abcdefghijklm";
+static const char abc2[] = "nopqrstuvwxyz";
+static const char num[]  = "1234567890";
+
+void get_passwd(u_char lb[], u_char rb[], char passwd[]) {
+    u_char c = 0;
+    u_char bytes[32] = {0};
+    for (int i = 0; i < 32; i++) {
+        for (int si = 0; si < 4; si++) {
+            bytes[i] = bytes[i] ^ (lb[i*4 + si] + rb[i*4 + si]);
+        }
+        c = bytes[i];
+        u_char lead_bit = c & 0x80;
+        u_char next_two_bits = c & 0x60;
+        u_char last_five = c & 0x1F;
+        if (lead_bit) { // shifted or special
+            switch (next_two_bits % 3) {
+                case 0:
+                    passwd[i] = ABC1[last_five % (sizeof(ABC1) - 1)];
+                    break;
+                case 1:
+                    passwd[i] = ABC2[last_five % (sizeof(ABC2) - 1)];
+                    break;
+                case 2:
+                    passwd[i] = SPC[last_five % (sizeof(SPC) - 1)];
+                    break;
+            }
+        } else { // notshifted or number
+            switch (next_two_bits % 3) {
+                case 0:
+                    passwd[i] = abc1[last_five % (sizeof(abc1) - 1)];
+                    break;
+                case 1:
+                    passwd[i] = abc2[last_five % (sizeof(abc2) - 1)];
+                    break;
+                case 2:
+                    passwd[i] = num[last_five % (sizeof(num) - 1)];
+                    break;
+            }
+        }
+    }
+    passwd[32] = '\0';
+}
+
+int main(int argc, char *argv[]) {
+    if (argc == 1) {
+        fprintf(stderr, "Usage: cpassgen <STRING>\n");
+        return 1;
+    }
+	u_char first_block[sq] = {0};
 	memset(first_block, 0, sq);
 	for (int i = 0; i < bs; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -122,15 +232,30 @@ int main() {
     seed_from_block(&seed, first_block);
     srand(seed);
 	// gen
-	u_char *gen = (u_char*)calloc(bb, sizeof(u_char));
-    gen_init(&gen);
+    u_char gen[bb] = {0};
+    gen_init(gen);
 	// First shuffle
-	gen_part_1(&gen);
+	gen_part_1(gen);
 	// Second shuffle
-	gen_part_2(&gen);
-	u_char left_block[mb];
-	u_char right_block[mb];
-	memset(left_block, ~0, mb);
-	memset(right_block, 0, mb);
+	gen_part_2(gen);
+    // Handling user input
+    for (int i = 1; i < argc; i++) {
+        // getting new_seed for every arg
+        gen_new_seed(&seed, gen, argv[i]);
+        srand(seed);
+        //
+        u_char left_block[mb] = {0};
+        memset(left_block, ~0, mb);
+        lbcalc(left_block, argv[i]);
+        //
+        u_char right_block[mb] = {0};
+        memset(right_block, 0, mb);
+        rbcalc(right_block, argv[i]);
+        //
+        printf("%s :: ", argv[i]);
+        char password[33];
+        get_passwd(left_block, right_block, password);
+        printf("%s\n", password);
+    }
 	return 0;
 }

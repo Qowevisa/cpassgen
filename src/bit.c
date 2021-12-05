@@ -50,7 +50,7 @@ u_char ROTL(u_char c, u_char n) {
 }
 
 u_int ROTL_UINT(u_int num, u_int n) {
-	if (n >= 32 || n <= 0) {
+	if (n >= 32) {
         n %= 32;
     }
 	u_int bits = 0xFFFFFFFF << (32 - n);
@@ -60,7 +60,7 @@ u_int ROTL_UINT(u_int num, u_int n) {
 }
 
 u_int ROTR_UINT(u_int num, u_int n) {
-	if (n >= 32 || n <= 0) {
+	if (n >= 32) {
         n %= 32;
     }
 	u_int bits = 0xFFFFFFFF >> (32 - n);
