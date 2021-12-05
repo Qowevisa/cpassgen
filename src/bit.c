@@ -1,9 +1,9 @@
-#include "../inc/bit.h"
-#include "../inc/math.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "../inc/bit.h"
+#include "../inc/math.h"
 
 u_char mvnbitr(u_char c, u_char n) {
 	u_char counter = 0;

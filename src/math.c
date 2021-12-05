@@ -1,6 +1,7 @@
-#include "../inc/math.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include "../inc/math.h"
+#include "../inc/bit.h"
 
 float Q_rsqrt(float number) {
     long i;
