@@ -1,23 +1,12 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <math.h>
 #include "../inc/math.h"
 #include "../inc/bit.h"
 
 float Q_rsqrt(float number) {
-    long i;
-    float x2, y;
-    const float t = 1.5;
-
-    x2 = number * 0.5;
-    y = number;
-    i = * (long*)&y;
-    i = 0x5f3759df - (i >> 1);
-    y = * (float*)&i;
-    y = y*( t - (x2 * y * y));
-    y = y*( t - (x2 * y * y));
-    return y;
+    return 1 / sqrt(number);
 }
-
 
 bool is_prime(u_int num) {
     if (num < 2) {

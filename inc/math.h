@@ -1,6 +1,5 @@
 #ifndef __cpassgen__math_h
 #define __cpassgen__math_h
-#include <math.h>
 
 float Q_rsqrt(float number);
 void gen_new_prime(unsigned int * prime);

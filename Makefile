@@ -1,6 +1,6 @@
 include config.mk
 project_name = cpassgen
-libs = bit gen
+libs = bit gen math
 OBJ_F = obj
 SRC_F = src
 
@@ -10,12 +10,9 @@ def: build
 $(OBJ_F)/%.o : $(SRC_F)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-math:
-	gcc -O2 -lm -c -o $(OBJ_F)/math.o $(SRC_F)/math.c
-
-build: $(libs:%=$(OBJ_F)/%.o) math
+build: $(libs:%=$(OBJ_F)/%.o)
 	@echo "Bulding..."
-	$(CC) -o $(project_name) $(SRC_F)/$(project_name).c $(libs:%=$(OBJ_F)/%.o) $(OBJ_F)/math.o $(CFLAGS)
+	$(CC) -o $(project_name) $(SRC_F)/$(project_name).c $(libs:%=$(OBJ_F)/%.o) $(CFLAGS)
 
 install:
 	@echo "Copying to bin folder..."
