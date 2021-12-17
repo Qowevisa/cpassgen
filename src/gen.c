@@ -4,6 +4,7 @@
 #include "../inc/gen.h"
 #include "../inc/math.h"
 #include "../inc/bit.h"
+#include "../inc/random.h"
 
 #define bs 16
 #define sq 64
@@ -13,7 +14,7 @@
 void gen_init(u_char gen[]) {
     for (int cycle = 0; cycle < 5; cycle++) {
         for (int i = 0; i < bb; i++) {
-            gen[i] = gen[i] ^ (rand() % 256);
+            gen[i] = gen[i] ^ (gen_rand() % 256);
         }
     }
 }
@@ -139,11 +140,11 @@ void rbcalc(u_char rblock[], char *arg) {
     size_t len = strlen(arg);
     size_t processed = 0;
     while (processed != len) {
-        rblock[processed % mb] += arg[processed] + (rand() % 256);
+        rblock[processed % mb] += arg[processed] + (gen_rand() % 256);
         processed++;
     }
     while (processed % mb != 0) {
-        rblock[processed % mb] += rand() % 256;
+        rblock[processed % mb] += gen_rand() % 256;
         processed++;
     }
     //
@@ -157,11 +158,11 @@ void lbcalc(u_char lblock[], char *arg) {
     size_t len = strlen(arg);
     size_t processed = 0;
     while (processed != len) {
-        lblock[processed % mb] = lblock[processed % mb] ^ (arg[processed] + (rand() % 256));
+        lblock[processed % mb] = lblock[processed % mb] ^ (arg[processed] + (gen_rand() % 256));
         processed++;
     }
     while (processed % mb != 0) {
-        lblock[processed % mb] = lblock[processed % mb] ^ (rand() % 256);
+        lblock[processed % mb] = lblock[processed % mb] ^ (gen_rand() % 256);
         processed++;
     }
     //

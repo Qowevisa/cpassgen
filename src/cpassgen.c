@@ -6,6 +6,7 @@
 #include "../inc/bit.h"
 #include "../inc/math.h"
 #include "../inc/gen.h"
+#include "../inc/random.h"
 
 enum states {
     silent = 1,
@@ -70,7 +71,7 @@ int main(int argc, char *argv[]) {
     // creating seed from first_block
     u_int seed = 0;
     seed_from_block(&seed, first_block);
-    srand(seed);
+    set_seed(seed);
 	// gen
     u_char gen[bb] = {0};
     gen_init(gen);
@@ -94,7 +95,7 @@ int main(int argc, char *argv[]) {
         }
         // getting new_seed for every arg
         gen_new_seed(&seed, gen, argv[i]);
-        srand(seed);
+        set_seed(seed);
         //
         u_char left_block[mb] = {0};
         memset(left_block, ~0, mb);
