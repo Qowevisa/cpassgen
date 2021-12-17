@@ -34,7 +34,6 @@ ull BETA(ull num) {
         (num & 0x00FF0000) ^
         (num & 0xFF000000) ;
     ull itmp = 
-        0           |
         tmp << 0    |
         tmp << 8    |
         tmp << 16   |
@@ -52,7 +51,7 @@ void set_seed(ull seed) {
     __seed = seed;
 }
 
-unsigned long long gen_rand() {
+ull gen_rand() {
     iterate_seed();
     return __seed;
 }
