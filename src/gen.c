@@ -179,13 +179,39 @@ static const char abc1[] = "abcdefghijklm";
 static const char abc2[] = "nopqrstuvwxyz";
 static const char num[]  = "1234567890521";
 
-void get_passwd(u_char lb[], u_char rb[], char passwd[]) {
+void get_passwd(u_char lb[], u_char rb[], char passwd[], const unsigned int len) {
     u_char c = 0;
-    u_char bytes[32] = {0};
-    for (int i = 0; i < 32; i++) {
-        for (int si = 0; si < 4; si++) {
-            bytes[i] = bytes[i] ^ (lb[i*4 + si] + rb[i*4 + si]);
+    u_char *bytes = (u_char*)calloc(len, 1);
+    for (u_int i = 0; i < len; i++) {
+        switch (len) {
+            case 256:
+                if (i % 2 == 0) {
+                    bytes[i] = lb[i / 2];
+                } else {
+                    bytes[i] = rb[i / 2];
+                }
+                break;
+            case 128:
+                bytes[i] = bytes[i] ^ (lb[i] + rb[i]);
+                break;
+            case 64:
+                for (int si = 0; si < 2; si++) {
+                    bytes[i] = bytes[i] ^ (lb[i*2 + si] + rb[i*2 + si]);
+                }
+                break;
+            case 32:
+                for (int si = 0; si < 4; si++) {
+                    bytes[i] = bytes[i] ^ (lb[i*4 + si] + rb[i*4 + si]);
+                }
+                break;
+            default:
+                if (i < 128) {
+                    bytes[i] = bytes[i] ^ (3*(lb[i] + rb[i]) + 15);
+                } else {
+                    bytes[i] = bytes[i] ^ (bytes[i - 1] + bytes[i - 65] + bytes[i - 128]);
+                }
         }
+        //
         c = bytes[i];
         u_char lead_bit = c & 0x80;
         u_char next_two_bits = c & 0x60;
@@ -216,11 +242,11 @@ void get_passwd(u_char lb[], u_char rb[], char passwd[]) {
             }
         }
     }
-    if (passwd[31] == '@' ||
-        passwd[31] == ':' ||
-        passwd[31] == '#') {
-        passwd[31] = ABC2[bytes[16] % sizeof(ABC2)];
+    if (passwd[len - 1] == '@' ||
+        passwd[len - 1] == ':' ||
+        passwd[len - 1] == '#') {
+        passwd[len - 1] = ABC2[bytes[16] % sizeof(ABC2)];
     }
-    passwd[32] = '\0';
+    passwd[len] = '\0';
 }
 

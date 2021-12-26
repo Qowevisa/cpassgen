@@ -81,12 +81,22 @@ int main(int argc, char *argv[]) {
 	gen_part_2(gen);
     // first_skip variable
     u_char fs = 0;
+    // two variables for len
+    u_int nl = 32;
+    u_int ol = 32;
     // Handling user input
     for (int i = 1; i < argc; i++) {
         // skip args that starts with '-'
         if (*argv[i] == '-') {
+            u_int num = (unsigned int)atoi(argv[i] + 1);
+            if (num > 0) {
+                ol = nl;
+                nl = num;
+            }
             continue;
         } else {
+            ol = nl;
+            nl = 32;
             fs++;
         }
         // skip after first arg that don't start with '-'
@@ -108,8 +118,8 @@ int main(int argc, char *argv[]) {
         if (!(state & silent)) {
             printf("%s :: ", argv[i]);
         }
-        char password[33];
-        get_passwd(left_block, right_block, password);
+        char *password = (char*)calloc(ol + 1, 1);
+        get_passwd(left_block, right_block, password, ol);
         printf("%s", password);
         if (!(state & no_new_line)) {
             printf("\n");

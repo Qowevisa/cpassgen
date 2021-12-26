@@ -11,7 +11,7 @@ void seed_from_block(unsigned int *seed, unsigned char block[]);
 void rbcalc(unsigned char rblock[], char *arg);
 // WARNING: USES rand() !
 void lbcalc(unsigned char lblock[], char *arg);
-void get_passwd(unsigned char lb[], unsigned char rb[], char passwd[]);
+void get_passwd(unsigned char lb[], unsigned char rb[], char passwd[], const unsigned int len);
 
 #endif // __cpassgen__gen_h
 
