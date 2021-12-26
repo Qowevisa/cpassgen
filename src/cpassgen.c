@@ -16,11 +16,16 @@ enum states {
 
 void print_menu_help() {
     fprintf(stderr, 
-        "Usage: cpassgen [OPTIONS] <STRING>\n"
+        "Usage: cpassgen [OPTIONS] [LEN] <STRING>\n"
         "Options:\n"
         "  -s   :  put just password for every usefull arg given\n"
         "  -f   :  parse only first usefull arg\n"
-        "  -n   :  no new line symbol after every password\n");
+        "  -n   :  no new line symbol after every password\n"
+        "Len:\n"
+        "If you want to get a password which length will be\n"
+        " 16, 32, 64, 128 or etc. Insert an option before\n"
+        " the string for password. For example:\n"
+        " cpassgen -33 test -16 testtest -1000 big_test\n");
 }
 
 int main(int argc, char *argv[]) {
