@@ -17,7 +17,12 @@ enum states {
 void print_menu_help() {
     fprintf(stderr, 
         "Usage: cpassgen [OPTIONS] [LEN] <STRING>\n"
+        "Version: " VERSION "\n"
         "Options:\n"
+        "  -h   :  prints this menu\n"
+        "   --help\n"
+        "  -v   :  prints the version of program\n"
+        "   --version\n"
         "  -s   :  put just password for every usefull arg given\n"
         "  -f   :  parse only first usefull arg\n"
         "  -n   :  no new line symbol after every password\n"
@@ -33,9 +38,13 @@ int main(int argc, char *argv[]) {
         print_menu_help();
         return 1;
     }
-    if (strcmp(argv[1],"-h") == 0 ||
+    if  (strcmp(argv[1],"-h") == 0 ||
         strcmp(argv[1],"--help") == 0) {
         print_menu_help();
+        return 1;
+    } else if  (strcmp(argv[1],"-v") == 0 ||
+                strcmp(argv[1],"--version") == 0) {
+        printf(VERSION "\n");
         return 1;
     }
     // parsing options
