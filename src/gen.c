@@ -179,6 +179,11 @@ static const char abc1[] = "abcdefghijklm";
 static const char abc2[] = "nopqrstuvwxyz";
 static const char num[]  = "1234567890521";
 
+// transforms 
+static inline u_char size_to_byte(const unsigned int size) {
+    return (size*13 + (size&0x55555555) - (size&0xAAAAAAAA)) % 256;
+}
+
 void get_passwd(u_char lb[], u_char rb[], char passwd[], const unsigned int len) {
     u_char c = 0;
     u_char *bytes = (u_char*)calloc(len, 1);
@@ -192,30 +197,30 @@ void get_passwd(u_char lb[], u_char rb[], char passwd[], const unsigned int len)
                 }
                 break;
             case 128:
-                bytes[i] = bytes[i] ^ (lb[i] + rb[i]);
+                bytes[i] = lb[i] + rb[i];
                 break;
             case 64:
                 for (int si = 0; si < 2; si++) {
-                    bytes[i] = bytes[i] ^ (lb[i*2 + si] + rb[i*2 + si]);
+                    bytes[i] = lb[i*2 + si] + rb[i*2 + si];
                 }
                 break;
             case 32:
                 for (int si = 0; si < 4; si++) {
-                    bytes[i] = bytes[i] ^ (lb[i*4 + si] + rb[i*4 + si]);
+                    bytes[i] = lb[i*4 + si] + rb[i*4 + si];
                 }
                 break;
             default:
                 if (i < 128) {
-                    bytes[i] = bytes[i] ^ (3*(lb[i] + rb[i]) + 15);
+                    bytes[i] = (3*(lb[i] + rb[i]) + 15 + size_to_byte(len));
                 } else {
-                    bytes[i] = bytes[i] ^ (bytes[i - 1] + bytes[i - 65] + bytes[i - 128]);
+                    bytes[i] = (bytes[i - 1] + bytes[i - 65] + bytes[i - 128] + size_to_byte(len));
                 }
         }
         //
         c = bytes[i];
-        u_char lead_bit = c & 0x80;
+        u_char lead_bit      = c & 0x80;
         u_char next_two_bits = c & 0x60;
-        u_char last_five = c & 0x1F;
+        u_char last_five     = c & 0x1F;
         if (lead_bit) { // shifted or special
             switch (next_two_bits % 3) {
                 case 0:
