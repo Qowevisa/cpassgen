@@ -23,11 +23,11 @@ ull ROTL_ULL(ull num, ull n) {
 
 ull __seed = 0;
 
-ull ALPHA(ull num) {
+static inline ull ALPHA(ull num) {
     return (ROTR_ULL(num, 13) ^ ROTL_ULL(num, 7)) + num;
 }
 
-ull BETA(ull num) {
+static inline ull BETA(ull num) {
     u_char tmp =
         (num & 0x000000FF) ^
         (num & 0x0000FF00) ^
