@@ -96,8 +96,8 @@ int main(int argc, char *argv[]) {
     // first_skip variable
     u_char fs = 0;
     // two variables for len
-    u_int nl = 32;
-    u_int ol = 32;
+    u_int nl = DEFAULT_LENGTH;
+    u_int ol = DEFAULT_LENGTH;
     // Handling user input
     for (int i = 1; i < argc; i++) {
         // skip args that starts with '-'
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
             continue;
         } else {
             ol = nl;
-            nl = 32;
+            nl = DEFAULT_LENGTH;
             fs++;
         }
         // skip after first arg that don't start with '-'
