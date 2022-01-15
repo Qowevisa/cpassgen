@@ -7,10 +7,13 @@ SRC_F = src
 def: build
 	@
 
+$(OBJ_F):
+	mkdir -p ./$(OBJ_F)
+
 $(OBJ_F)/%.o : $(SRC_F)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-build: $(libs:%=$(OBJ_F)/%.o)
+build: $(OBJ_F) $(libs:%=$(OBJ_F)/%.o)
 	@echo "Bulding..."
 	$(CC) -o $(project_name) $(SRC_F)/$(project_name).c $(libs:%=$(OBJ_F)/%.o) $(CFLAGS)
 
