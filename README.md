@@ -8,7 +8,7 @@ Cpassgen is a pure C minimalistic program that will shuffle your input data into
  - Everytime I change the version of the algorithm I will increment the first number in version so you can easily get back source and restore needed binary file.
 
 # Builing
-Create "obj" folder and compile everything by calling make
+Just call make
 ```
-mkdir -p ./obj ; make
+make
 ```
