@@ -14,7 +14,7 @@ enum states {
     no_new_line = 4
 };
 
-void print_menu_help() {
+static inline void print_menu_help() {
     fprintf(stderr, 
         "Usage: cpassgen [OPTIONS] [LEN] <STRING>\n"
         "Version: " VERSION "\n"
