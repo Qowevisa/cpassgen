@@ -89,7 +89,7 @@ void gen_new_seed(u_int *seed, u_char gen[], char *arg) {
         i++;
     }
     for (size_t i = 0; i < len; i++) {
-        sum += arg[i];
+        sum += (13*(i+1) ^ 97*arg[i])*0xFFC3AD;
     }
     *seed = sum;
 }

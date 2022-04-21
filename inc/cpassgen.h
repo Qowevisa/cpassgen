@@ -6,7 +6,7 @@
 #define mb 128
 #define bb 256
 
-#define VERSION "1.1.4"
+#define VERSION "2.0.0"
 
 #define DEFAULT_LENGTH 32
 
